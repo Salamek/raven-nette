@@ -20,7 +20,7 @@ WARNING: This project is alpha version, keep it in mind and report Issues send P
 
 ### Usage
 
-#### Put this code into your `app/bootstrap.php` after RobotLoader is initiated and $configurator->enableDebugger is called:
+Put this code into your `app/bootstrap.php` after RobotLoader is initiated and `$configurator->enableDebugger` is called:
 
     // Initiate sentryLogger
     $sentryLogger = new \Salamek\sentryNetteLogger(

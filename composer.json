@@ -1,0 +1,20 @@
+{
+  "name": "salamek/raven-nette",
+  "description": "Nette implementation of sentry raven-php as logger service for tracy.",
+  "keywords": ["nette", "raven", "sentry", "tracy", "debbuger"],
+  "homepage": "https://github.com/Salamek/raven-nette",
+  "license": ["BSD-3-Clause", "GPL-3.0"],
+  "authors": [
+    {
+      "name": "Adam Schubet",
+      "homepage": "http://www.salamek.cz"
+    }
+  ],
+  "autoload": {
+    "classmap": ["src/"]
+  },
+  "require": {
+    "php": ">=5.3.0",
+    "nette/nette": ">=2.1.0"
+  }
+}

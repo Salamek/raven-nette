@@ -21,24 +21,24 @@ WARNING: This project is alpha version, keep it in mind and report Issues send P
 ### Usage
 
 Put this code into your `app/bootstrap.php` after RobotLoader is initiated and `$configurator->enableDebugger` is called:
+```php
+// Initiate sentryLogger
+$sentryLogger = new \Salamek\sentryNetteLogger(
+      'YourSentryDSN', //Sentry DSN
+      false, //Log in DEBUG mode ? //You dont want that...
+      null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
+      null, //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
+      Tracy\Debugger::getBlueScreen() //~required 
+      );
 
-    // Initiate sentryLogger
-    $sentryLogger = new \Salamek\sentryNetteLogger(
-          'YourSentryDSN', //Sentry DSN
-          false, //Log in DEBUG mode ? //You dont want that...
-          null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
-          null, //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
-          Tracy\Debugger::getBlueScreen() //~required 
-          );
+// Add Fatal Error handler
+\Tracy\Debugger::$onFatalError[] = function($e) use($sentryLogger)
+{
+  $sentryLogger->onFatalError($e);
+};
 
-    // Add Fatal Error handler
-    \Tracy\Debugger::$onFatalError[] = function($e) use($sentryLogger)
-    {
-      $sentryLogger->onFatalError($e);
-    };
-
-    // Add logger to tracy
-    Tracy\Debugger::setLogger($sentryLogger);
-
+// Add logger to tracy
+Tracy\Debugger::setLogger($sentryLogger);
+```
 
 And that should be everything...

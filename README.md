@@ -27,8 +27,7 @@ $sentryLogger = new \Salamek\sentryNetteLogger(
       'YourSentryDSN', //Sentry DSN
       false, //Log in DEBUG mode ? //You dont want that...
       null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
-      null, //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
-      Tracy\Debugger::getBlueScreen() //~required 
+      null //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
       );
 
 // Add Fatal Error handler

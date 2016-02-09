@@ -17,26 +17,26 @@ namespace Salamek;
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
- * 
+ *
  * OR
- * 
+ *
  * Copyright (C) 2015, Adam Schubert
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * Redistributions of source code must retain the above copyright notice, this
  * list of conditions and the following disclaimer.
- * 
+ *
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * 
+ *
  * * Neither the name of test nor the names of its
  *  contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -60,12 +60,12 @@ class sentryNetteLogger extends \Tracy\Logger
 {
   private $raven;
   private $enabled = true;
-  
-  
-  public function __construct($dsn, $inDebug = false,  $directory = NULL, $email = NULL, \Tracy\BlueScreen $blueScreen = NULL)
+
+
+  public function __construct($dsn, $inDebug = false,  $directory = NULL, $email = NULL)
   {
-    parent::__construct($directory, $email, $blueScreen);
-    
+  parent::__construct($directory, $email, \Tracy\Debugger::getBlueScreen());
+
     //Check for production mode, you will want to fllod sentry only in production... right ?
     $this->enabled = \Tracy\Debugger::$productionMode || $inDebug;
 
@@ -83,13 +83,13 @@ class sentryNetteLogger extends \Tracy\Logger
         $line = $this->formatLogLine($message, $exceptionFile);
         $file = $this->directory . '/' . strtolower($priority ?: self::INFO) . '.log';
 
-        if (!@file_put_contents($file, $line . PHP_EOL, FILE_APPEND | LOCK_EX)) 
+        if (!@file_put_contents($file, $line . PHP_EOL, FILE_APPEND | LOCK_EX))
         {
           throw new \RuntimeException("Unable to write to log file '$file'. Is directory writable?");
         }
       }
 
-      if ($message instanceof \Exception) 
+      if ($message instanceof \Exception)
       {
         $this->raven->captureException($message);
 
@@ -103,7 +103,7 @@ class sentryNetteLogger extends \Tracy\Logger
         $this->raven->captureMessage($message, array(), $priority);
       }
 
-      if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), TRUE)) 
+      if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), TRUE))
       {
         $this->sendEmail($message);
       }
@@ -115,7 +115,7 @@ class sentryNetteLogger extends \Tracy\Logger
       return parent::log($message, $priority);
     }
   }
-  
+
   public function onFatalError($e)
   {
     if ($this->enabled)
@@ -124,4 +124,3 @@ class sentryNetteLogger extends \Tracy\Logger
     }
   }
 }
-

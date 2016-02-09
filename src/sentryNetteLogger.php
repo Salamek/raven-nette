@@ -109,7 +109,10 @@ class sentryNetteLogger extends \Tracy\Logger
       }
       else
       {
-        $this->raven->captureMessage($message, array(), $priority);
+        if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL, self::WARNING), TRUE))
+        {
+          $this->raven->captureMessage($message, array(), $priority);
+        }
       }
 
       if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), TRUE))

@@ -64,12 +64,21 @@ class sentryNetteLogger extends \Tracy\Logger
 
   public function __construct($dsn, $inDebug = false,  $directory = NULL, $email = NULL)
   {
-  parent::__construct($directory, $email, \Tracy\Debugger::getBlueScreen());
+    parent::__construct($directory, $email, \Tracy\Debugger::getBlueScreen());
 
     //Check for production mode, you will want to fllod sentry only in production... right ?
     $this->enabled = \Tracy\Debugger::$productionMode || $inDebug;
 
     $this->raven = new \Raven_Client($dsn);
+
+    //Add sentryNetteLogger to tracy
+    \Tracy\Debugger::$onFatalError[] = function($e)
+    {
+      $this->onFatalError($e);
+    };
+
+    // Add logger to tracy
+    \Tracy\Debugger::setLogger($this);
   }
 
   public function log($message, $priority = self::INFO)

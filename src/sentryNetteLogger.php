@@ -62,7 +62,7 @@ class sentryNetteLogger extends \Tracy\Logger
   private $enabled = true;
 
 
-  public function __construct($dsn, $inDebug = false,  $directory = NULL, $email = NULL)
+  public function __construct($dsn, $inDebug = false,  $directory = null, $email = null)
   {
     parent::__construct($directory, $email, \Tracy\Debugger::getBlueScreen());
 

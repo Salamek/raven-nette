@@ -50,10 +50,9 @@
 
 namespace Salamek\RavenNette;
 
- use Exception;
- use Tracy\BlueScreen;
- use Tracy\Debugger;
- use Tracy\Logger;
+use Exception;
+use Tracy\Debugger;
+use Tracy\Logger;
 
 /**
  * Description of sentryLogger

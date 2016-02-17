@@ -64,23 +64,16 @@ use Tracy\Debugger;
  */
 class SentryLoggerExtension extends CompilerExtension
 {
-
-	// Default values
-	private $defaults = array(
-		'inDebug' => false,
-		'directory' => Debugger::$logDirectory,
-		'email' => Debugger::$email
-	);
-
 	public function afterCompile(ClassType $class)
 	{
-		$config = $this->getConfig($this->defaults);
+		$defaults = array();
+		$defaults['inDebug'] = false;
+		$defaults['directory'] = Debugger::$logDirectory;
+		$defaults['email'] = Debugger::$email;
+
+		$config = $this->getConfig($defaults);
 
 		Validators::assertField($config, 'dsn', 'string');
-
-		//Validators::assertField($config, 'inDebug', 'boolean');
-		//Validators::assertField($config, 'directory', 'string');
-		//Validators::assertField($config, 'email', 'string');
 
 		$init = $class->getMethod('initialize');
 		$init->addBody(

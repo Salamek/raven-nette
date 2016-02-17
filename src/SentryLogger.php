@@ -1,5 +1,4 @@
 <?php
-namespace Salamek;
 /*
  * Copyright (C) 2015 Adam Schubert <adam.schubert@sg1-game.net>.
  *
@@ -49,36 +48,45 @@ namespace Salamek;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace Salamek\RavenNette;
 
+ use Exception;
+ use Tracy\BlueScreen;
+ use Tracy\Debugger;
+ use Tracy\Logger;
 
 /**
  * Description of sentryLogger
  *
  * @author Adam Schubert <adam.schubert@sg1-game.net>
  */
-class sentryNetteLogger extends \Tracy\Logger
+class SentryLogger extends Logger
 {
   private $raven;
   private $enabled = true;
 
 
-  public function __construct($dsn, $inDebug = false,  $directory = null, $email = null)
+  public function __construct($dsn, $inDebug = false,  $directory = null, $email = null, $autoWire = true)
   {
-    parent::__construct($directory, $email, \Tracy\Debugger::getBlueScreen());
+    parent::__construct($directory, $email, Debugger::getBlueScreen());
 
     //Check for production mode, you will want to fllod sentry only in production... right ?
-    $this->enabled = \Tracy\Debugger::$productionMode || $inDebug;
+    $this->enabled = Debugger::$productionMode || $inDebug;
 
     $this->raven = new \Raven_Client($dsn);
 
-    //Add sentryNetteLogger to tracy
-    \Tracy\Debugger::$onFatalError[] = function($e)
+    if ($autoWire)
     {
-      $this->onFatalError($e);
-    };
+      //Add sentryNetteLogger to tracy
+      $that = $this;
+      Debugger::$onFatalError[] = function($e) use($that)
+      {
+        $that->onFatalError($e);
+      };
 
-    // Add logger to tracy
-    \Tracy\Debugger::setLogger($this);
+      // Add logger to tracy
+      Debugger::setLogger($this);
+    }
   }
 
   public function log($message, $priority = self::INFO)
@@ -88,7 +96,7 @@ class sentryNetteLogger extends \Tracy\Logger
       $exceptionFile = '';
       if ($this->directory && is_dir($this->directory))
       {
-        $exceptionFile = $message instanceof \Exception ? $this->getExceptionFile($message) : NULL;
+        $exceptionFile = $message instanceof Exception ? $this->getExceptionFile($message) : NULL;
         $line = $this->formatLogLine($message, $exceptionFile);
         $file = $this->directory . '/' . strtolower($priority ?: self::INFO) . '.log';
 
@@ -98,7 +106,7 @@ class sentryNetteLogger extends \Tracy\Logger
         }
       }
 
-      if ($message instanceof \Exception)
+      if ($message instanceof Exception)
       {
         $this->raven->captureException($message);
 

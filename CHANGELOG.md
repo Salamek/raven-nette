@@ -1,4 +1,9 @@
 
+v1.2.0
+------
+* Added DI Extension
+* Changed namespace from `Salamek` to `Salamek\RavenNette`
+
 v1.1.1
 ------
 Fixes issue when all Tracy events was send to Sentry, now only events of ERROR, EXCEPTION, CRITICAL and WARNING are send to Sentry (ignores DEBUG, INFO)

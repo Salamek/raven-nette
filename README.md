@@ -27,7 +27,7 @@ And configure by setting:
 
 ```yaml
 sentryLogger:
-  dsn: 'YOUR_SENTRY_DNS'
+  dsn: 'YOUR_SENTRY_DSN'
 
   # Optional configuration values
   inDebug: false # bool: Log in debug mode ? default is false
@@ -46,7 +46,7 @@ Put this code into your `app/bootstrap.php` after RobotLoader is initiated and `
 ```php
 // Initiate sentryLogger
 new \Salamek\RavenNette\SentryLogger(
-  'YourSentryDSN', //Sentry DSN
+  'YOUR_SENTRY_DSN', //Sentry DSN
   false, //Log in DEBUG mode ? //You dont want that...
   null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
   null //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )

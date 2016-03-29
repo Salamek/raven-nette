@@ -70,6 +70,7 @@ class SentryLoggerExtension extends CompilerExtension
 		$defaults['inDebug'] = false;
 		$defaults['directory'] = Debugger::$logDirectory;
 		$defaults['email'] = Debugger::$email;
+		$defaults['options'] = [];
 
 		$config = $this->getConfig($defaults);
 
@@ -77,7 +78,7 @@ class SentryLoggerExtension extends CompilerExtension
 
 		$init = $class->getMethod('initialize');
 		$init->addBody(
-			'$sentryLogger = new ' . SentryLogger::class . '(?, ?, ?, ?, ?);'.
+			'$sentryLogger = new ' . SentryLogger::class . '(?, ?, ?, ?, ?, ?);'.
 			Debugger::class.'::$onFatalError[] = function($e) use($sentryLogger)'.
       '{'.
       '  $sentryLogger->onFatalError($e);'.
@@ -88,7 +89,8 @@ class SentryLoggerExtension extends CompilerExtension
 				$config['inDebug'],
 				$config['directory'],
 				$config['email'],
-				false
+				false,
+				$config['options']
 			)
 		);
 	}

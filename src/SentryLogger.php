@@ -65,14 +65,14 @@ class SentryLogger extends Logger
   private $enabled = true;
 
 
-  public function __construct($dsn, $inDebug = false,  $directory = null, $email = null, $autoWire = true)
+  public function __construct($dsn, $inDebug = false,  $directory = null, $email = null, $autoWire = true, $options = [])
   {
     parent::__construct($directory, $email, Debugger::getBlueScreen());
 
     //Check for production mode, you will want to fllod sentry only in production... right ?
     $this->enabled = Debugger::$productionMode || $inDebug;
 
-    $this->raven = new \Raven_Client($dsn);
+    $this->raven = new \Raven_Client($dsn, $options);
 
     if ($autoWire)
     {

@@ -88,6 +88,20 @@ class SentryLogger extends Logger
     }
   }
 
+  /**
+   * Set logged in user into raven context
+   * 
+   * @param null $userId
+   * @param null $email
+   * @param array|NULL $data
+   * 
+   * @return null
+   */
+  public function setUserContext($userId = NULL, $email = NULL, array $data = NULL)
+  {
+    $this->raven->set_user_data($userId, $email, $data);
+  }
+
   public function log($message, $priority = self::INFO)
   {
     if ($this->enabled)

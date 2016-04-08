@@ -93,6 +93,15 @@ class SentryLoggerExtension extends CompilerExtension
 				$config['options']
 			)
 		);
+
+		if (isset($config['context']['user']) && isset($config['context']['user']))
+		{
+			$init->addBody(
+				'$user = $this->getService(?);'.
+				'if ($user->isLoggedIn()) { $sentryLogger->setUserContext($user->getId(), \'\', (array) $user->getIdentity()); }',
+				['user']
+			);
+		}
 	}
 
 

@@ -34,6 +34,8 @@ sentryLogger:
   directory: null # string|null: Where to store log files ? default is Debugger::$logDirectory, null to disable
   email: null # string|null :Where to send email notifications ? default is Debugger::$email, null to disable
   options: [release: YOUR_RELEASE] # array :All options supported by getsentry/raven-php
+  context:
+    user: true # Send logged in user information
 ```
 List of all confuration options for [getsentry/raven-php](https://github.com/getsentry/raven-php#configuration)
 

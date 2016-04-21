@@ -64,45 +64,46 @@ use Tracy\Debugger;
  */
 class SentryLoggerExtension extends CompilerExtension
 {
-	public function afterCompile(ClassType $class)
-	{
-		$defaults = array();
-		$defaults['inDebug'] = false;
-		$defaults['directory'] = Debugger::$logDirectory;
-		$defaults['email'] = Debugger::$email;
-		$defaults['options'] = [];
+    /**
+     * @param ClassType $class
+     * @throws \Nette\Utils\AssertionException
+     */
+    public function afterCompile(ClassType $class)
+    {
+        $defaults = array();
+        $defaults['inDebug'] = false;
+        $defaults['directory'] = Debugger::$logDirectory;
+        $defaults['email'] = Debugger::$email;
+        $defaults['options'] = [];
 
-		$config = $this->getConfig($defaults);
+        $config = $this->getConfig($defaults);
 
-		Validators::assertField($config, 'dsn', 'string');
+        Validators::assertField($config, 'dsn', 'string');
 
-		$init = $class->getMethod('initialize');
-		$init->addBody(
-			'$sentryLogger = new ' . SentryLogger::class . '(?, ?, ?, ?, ?, ?);'.
-			Debugger::class.'::$onFatalError[] = function($e) use($sentryLogger)'.
-      '{'.
-      '  $sentryLogger->onFatalError($e);'.
-      '};'.
-			Debugger::class . '::setLogger($sentryLogger);',
-			array(
-				$config['dsn'],
-				$config['inDebug'],
-				$config['directory'],
-				$config['email'],
-				false,
-				$config['options']
-			)
-		);
+        $init = $class->getMethod('initialize');
+        $init->addBody(
+            '$sentryLogger = new ' . SentryLogger::class . '(?, ?, ?, ?, ?, ?);' .
+            Debugger::class . '::$onFatalError[] = function($e) use($sentryLogger)' .
+            '{' .
+            '  $sentryLogger->onFatalError($e);' .
+            '};' .
+            Debugger::class . '::setLogger($sentryLogger);',
+            array(
+                $config['dsn'],
+                $config['inDebug'],
+                $config['directory'],
+                $config['email'],
+                false,
+                $config['options']
+            )
+        );
 
-		if (isset($config['context']['user']) && isset($config['context']['user']))
-		{
-			$init->addBody(
-				'$user = $this->getService(?);'.
-				'if ($user->isLoggedIn()) { $sentryLogger->setUserContext($user->getId(), \'\', (array) $user->getIdentity()); }',
-				['user']
-			);
-		}
-	}
-
-
+        if (isset($config['context']['user']) && isset($config['context']['user'])) {
+            $init->addBody(
+                '$user = $this->getService(?);' .
+                'if ($user->isLoggedIn()) { $sentryLogger->setUserContext($user->getId(), \'\', (array) $user->getIdentity()); }',
+                ['user']
+            );
+        }
+    }
 }

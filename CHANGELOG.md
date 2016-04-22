@@ -1,4 +1,9 @@
 
+v1.3.0
+------
+* Option to send logged in user information to sentry when enabled in config [marten-cz](https://github.com/marten-cz)
+* Added support for configuration options [xdobro4](https://github.com/xdobro4)
+
 v1.2.0
 ------
 * Added DI Extension

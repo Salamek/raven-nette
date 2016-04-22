@@ -61,99 +61,104 @@ use Tracy\Logger;
  */
 class SentryLogger extends Logger
 {
-  private $raven;
-  private $enabled = true;
+    /** @var \Raven_Client */
+    private $raven;
 
+    /** @var bool */
+    private $enabled = true;
 
-  public function __construct($dsn, $inDebug = false,  $directory = null, $email = null, $autoWire = true, $options = [])
-  {
-    parent::__construct($directory, $email, Debugger::getBlueScreen());
-
-    //Check for production mode, you will want to fllod sentry only in production... right ?
-    $this->enabled = Debugger::$productionMode || $inDebug;
-
-    $this->raven = new \Raven_Client($dsn, $options);
-
-    if ($autoWire)
+    /**
+     * SentryLogger constructor.
+     * @param $dsn
+     * @param bool $inDebug
+     * @param null $directory
+     * @param null $email
+     * @param bool $autoWire
+     * @param array $options
+     */
+    public function __construct($dsn, $inDebug = false, $directory = null, $email = null, $autoWire = true, $options = [])
     {
-      //Add sentryNetteLogger to tracy
-      $that = $this;
-      Debugger::$onFatalError[] = function($e) use($that)
-      {
-        $that->onFatalError($e);
-      };
+        parent::__construct($directory, $email, Debugger::getBlueScreen());
 
-      // Add logger to tracy
-      Debugger::setLogger($this);
-    }
-  }
+        //Check for production mode, you will want to fllod sentry only in production... right ?
+        $this->enabled = Debugger::$productionMode || $inDebug;
 
-  /**
-   * Set logged in user into raven context
-   * 
-   * @param null $userId
-   * @param null $email
-   * @param array|NULL $data
-   * 
-   * @return null
-   */
-  public function setUserContext($userId = NULL, $email = NULL, array $data = NULL)
-  {
-    $this->raven->set_user_data($userId, $email, $data);
-  }
+        $this->raven = new \Raven_Client($dsn, $options);
 
-  public function log($message, $priority = self::INFO)
-  {
-    if ($this->enabled)
-    {
-      $exceptionFile = '';
-      if ($this->directory && is_dir($this->directory))
-      {
-        $exceptionFile = $message instanceof Exception ? $this->getExceptionFile($message) : NULL;
-        $line = $this->formatLogLine($message, $exceptionFile);
-        $file = $this->directory . '/' . strtolower($priority ?: self::INFO) . '.log';
+        if ($autoWire) {
+            //Add sentryNetteLogger to tracy
+            $that = $this;
+            Debugger::$onFatalError[] = function ($e) use ($that) {
+                $that->onFatalError($e);
+            };
 
-        if (!@file_put_contents($file, $line . PHP_EOL, FILE_APPEND | LOCK_EX))
-        {
-          throw new \RuntimeException("Unable to write to log file '$file'. Is directory writable?");
+            // Add logger to tracy
+            Debugger::setLogger($this);
         }
-      }
-
-      if ($message instanceof Exception)
-      {
-        $this->raven->captureException($message);
-
-        if ($this->directory && is_dir($this->directory))
-        {
-          $this->logException($message, $exceptionFile);
-        }
-      }
-      else
-      {
-        if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL, self::WARNING), TRUE))
-        {
-          $this->raven->captureMessage($message, array(), $priority);
-        }
-      }
-
-      if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), TRUE))
-      {
-        $this->sendEmail($message);
-      }
-
-      return $exceptionFile;
     }
-    else
+
+    /**
+     * Set logged in user into raven context
+     *
+     * @param null $userId
+     * @param null $email
+     * @param array|NULL $data
+     *
+     * @return null
+     */
+    public function setUserContext($userId = null, $email = null, array $data = null)
     {
-      return parent::log($message, $priority);
+        $this->raven->set_user_data($userId, $email, $data);
     }
-  }
 
-  public function onFatalError($e)
-  {
-    if ($this->enabled)
+    /**
+     * @param $message
+     * @param string $priority
+     * @return null|string
+     */
+    public function log($message, $priority = self::INFO)
     {
-      $this->raven->captureException($e);
+        if ($this->enabled) {
+            $exceptionFile = '';
+            if ($this->directory && is_dir($this->directory)) {
+                $exceptionFile = $message instanceof Exception ? $this->getExceptionFile($message) : null;
+                $line = $this->formatLogLine($message, $exceptionFile);
+                $file = $this->directory . '/' . strtolower($priority ?: self::INFO) . '.log';
+
+                if (!@file_put_contents($file, $line . PHP_EOL, FILE_APPEND | LOCK_EX)) {
+                    throw new \RuntimeException("Unable to write to log file '$file'. Is directory writable?");
+                }
+            }
+
+            if ($message instanceof Exception) {
+                $this->raven->captureException($message);
+
+                if ($this->directory && is_dir($this->directory)) {
+                    $this->logException($message, $exceptionFile);
+                }
+            } else {
+                if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL, self::WARNING), true)) {
+                    $this->raven->captureMessage($message, array(), $priority);
+                }
+            }
+
+            if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), true)) {
+                $this->sendEmail($message);
+            }
+
+            return $exceptionFile;
+        } else {
+            return parent::log($message, $priority);
+        }
     }
-  }
+
+    /**
+     * @param $e
+     */
+    public function onFatalError($e)
+    {
+        if ($this->enabled) {
+            $this->raven->captureException($e);
+        }
+    }
 }

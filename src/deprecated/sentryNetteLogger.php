@@ -51,10 +51,6 @@
 
 namespace Salamek;
 
-use Exception;
-use Tracy\BlueScreen;
-use Tracy\Debugger;
-use Tracy\Logger;
 use Salamek\RavenNette\SentryLogger;
 
 /**
@@ -64,9 +60,16 @@ use Salamek\RavenNette\SentryLogger;
  */
 class sentryNetteLogger extends SentryLogger
 {
-  public function __construct($dsn, $inDebug = false,  $directory = null, $email = null)
-  {
-    trigger_error('Salamek\sentryNetteLogger is deprecated; use Salamek\RavenNette\SentryLogger instead.', E_USER_DEPRECATED);
-    parent::__construct($dsn, $inDebug,  $directory, $email, true);
-  }
+    /**
+     * sentryNetteLogger constructor.
+     * @param $dsn
+     * @param bool $inDebug
+     * @param null $directory
+     * @param null $email
+     */
+    public function __construct($dsn, $inDebug = false, $directory = null, $email = null)
+    {
+        trigger_error('Salamek\sentryNetteLogger is deprecated; use Salamek\RavenNette\SentryLogger instead.', E_USER_DEPRECATED);
+        parent::__construct($dsn, $inDebug, $directory, $email, true);
+    }
 }

@@ -51,9 +51,9 @@ new \Salamek\RavenNette\SentryLogger(
   'YOUR_SENTRY_DSN', //Sentry DSN
   false, //Log in DEBUG mode ? //You dont want that...
   null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
-  null //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
+  null, //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
   true,
-  ['release': 'YOUR_RELEASE'] //All options supported by getsentry/raven-php
+  ['release' => 'YOUR_RELEASE'] //All options supported by getsentry/raven-php
 );
 ```
 

@@ -1,3 +1,6 @@
+v1.3.1
+------
+* Switch from deprecated raven/raven to sentry/sentry
 
 v1.3.0
 ------

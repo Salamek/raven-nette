@@ -57,4 +57,26 @@ new \Salamek\RavenNette\SentryLogger(
 );
 ```
 
+### Usage only with tracy
+
+If you dont want use nette at all but only raven-nette and tracy... well you can!
+
+```php
+include('vendor/autoload.php');
+use Tracy\Debugger;
+
+Debugger::enable(Debugger::PRODUCTION);
+
+new \Salamek\RavenNette\SentryLogger(
+  'YOUR_SENTRY_DSN', //Sentry DSN
+  false, //Log in DEBUG mode ? //You dont want that...
+  null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
+  null, //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
+  true,
+  ['release' => 'YOUR_RELEASE'] //All options supported by getsentry/raven-php
+);
+
+Debugger::log('My error', 'error');
+```
+
 And that should be everything...

@@ -37,7 +37,7 @@ sentryLogger:
   context:
     user: true # Send logged in user information
 ```
-List of all confuration options for [getsentry/raven-php](https://github.com/getsentry/raven-php#configuration)
+List of all confuration options for [getsentry/raven-php](https://github.com/getsentry/sentry-php#configuration)
 
 ### Alternative Usage
 

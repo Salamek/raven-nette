@@ -2,7 +2,7 @@
 
 This is nette implementation of sentry raven-php as logger service for tracy.
 
-Tested with nette 2.3>, please report any bugs into Issues
+Tested with nette 2.2>, please report any bugs into Issues
 
 PR's are welcomed!
 

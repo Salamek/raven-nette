@@ -33,11 +33,11 @@ sentryLogger:
   inDebug: false # bool: Log in debug mode ? default is false
   directory: null # string|null: Where to store log files ? default is Debugger::$logDirectory, null to disable
   email: null # string|null :Where to send email notifications ? default is Debugger::$email, null to disable
-  options: [release: YOUR_RELEASE] # array :All options supported by getsentry/raven-php
+  options: [release: YOUR_RELEASE] # array :All options supported by getsentry/sentry-php
   context:
     user: true # Send logged in user information
 ```
-List of all confuration options for [getsentry/raven-php](https://github.com/getsentry/sentry-php#configuration)
+List of all confuration options for [getsentry/sentry-php](https://github.com/getsentry/sentry-php#configuration)
 
 ### Alternative Usage
 
@@ -51,10 +51,32 @@ new \Salamek\RavenNette\SentryLogger(
   'YOUR_SENTRY_DSN', //Sentry DSN
   false, //Log in DEBUG mode ? //You dont want that...
   null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
-  null //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
+  null, //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
   true,
-  ['release': 'YOUR_RELEASE'] //All options supported by getsentry/raven-php
+  ['release' => 'YOUR_RELEASE'] //All options supported by getsentry/sentry-php
 );
+```
+
+### Usage only with tracy
+
+If you dont want use nette at all but only raven-nette and tracy... well you can!
+
+```php
+include('vendor/autoload.php');
+use Tracy\Debugger;
+
+Debugger::enable(Debugger::PRODUCTION);
+
+new \Salamek\RavenNette\SentryLogger(
+  'YOUR_SENTRY_DSN', //Sentry DSN
+  false, //Log in DEBUG mode ? //You dont want that...
+  null, //Set where do you want to store file log (Tracy\Debugger::$logDirectory | null | string)
+  null, //Send email as usual logger ?   (Tracy\Debugger::$email | null | string | array )
+  true,
+  ['release' => 'YOUR_RELEASE'] //All options supported by getsentry/sentry-php
+);
+
+Debugger::log('My error', 'error');
 ```
 
 And that should be everything...

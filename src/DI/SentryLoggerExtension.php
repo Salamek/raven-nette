@@ -80,7 +80,15 @@ class SentryLoggerExtension extends CompilerExtension
 
         Validators::assertField($config, 'dsn', 'string');
 
-        $init = $class->getMethod('initialize');
+        if (method_exists($class, 'getMethod'))
+        {
+            $init = $class->getMethod('initialize');
+        }
+        else
+        {
+            $init = $class->methods['initialize'];
+        }
+
         $init->addBody(
             '$sentryLogger = new ' . SentryLogger::class . '(?, ?, ?, ?, ?, ?);' .
             Debugger::class . '::$onFatalError[] = function($e) use($sentryLogger)' .

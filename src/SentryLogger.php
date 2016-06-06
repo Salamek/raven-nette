@@ -78,7 +78,11 @@ class SentryLogger extends Logger
      */
     public function __construct($dsn, $inDebug = false, $directory = null, $email = null, $autoWire = true, $options = [])
     {
-        parent::__construct($directory, $email, Debugger::getBlueScreen());
+        // Compability with nette 2.2.0, Tracy\Logger has no __construct in 2.2.0
+        if((new \ReflectionClass('Tracy\Logger'))->getConstructor())
+        {
+            parent::__construct($directory, $email, Debugger::getBlueScreen());
+        }
 
         //Check for production mode, you will want to fllod sentry only in production... right ?
         $this->enabled = Debugger::$productionMode || $inDebug;
@@ -121,8 +125,30 @@ class SentryLogger extends Logger
         if ($this->enabled) {
             $exceptionFile = '';
             if ($this->directory && is_dir($this->directory)) {
-                $exceptionFile = $message instanceof Exception ? $this->getExceptionFile($message) : null;
-                $line = $this->formatLogLine($message, $exceptionFile);
+
+                // Compability with nette 2.2.0, Tracy\Logger has no getExceptionFile in 2.2.0
+                if (method_exists($this, 'getExceptionFile')) {
+                    $exceptionFile = $message instanceof Exception ? $this->getExceptionFile($message) : null;
+                }
+                else
+                {
+                    $exceptionFile = null;
+                }
+
+                // Compability with nette 2.2.0, Tracy\Logger has no formatLogLine in 2.2.0
+                if (method_exists($this, 'formatLogLine'))
+                {
+                    $line = $this->formatLogLine($message, $exceptionFile);
+                }
+                else
+                {
+                    if (is_array($message)) {
+                        $message = implode(' ', $message);
+                    }
+                    $line = preg_replace('#\s*\r?\n\s*#', ' ', trim($message));
+                }
+
+
                 $file = $this->directory . '/' . strtolower($priority ?: self::INFO) . '.log';
 
                 if (!@file_put_contents($file, $line . PHP_EOL, FILE_APPEND | LOCK_EX)) {
@@ -130,10 +156,12 @@ class SentryLogger extends Logger
                 }
             }
 
+
+
             if ($message instanceof Exception) {
                 $this->raven->captureException($message);
 
-                if ($this->directory && is_dir($this->directory)) {
+                if ($this->directory && is_dir($this->directory) && method_exists($this, 'logException')) {
                     $this->logException($message, $exceptionFile);
                 }
             } else {
@@ -142,10 +170,11 @@ class SentryLogger extends Logger
                 }
             }
 
-            if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), true)) {
+            // Compability with nette 2.2.0, Tracy\Logger has no sendEmail in 2.2.0
+            if (in_array($priority, array(self::ERROR, self::EXCEPTION, self::CRITICAL), true) && method_exists($this, 'sendEmail')) {
                 $this->sendEmail($message);
             }
-
+            
             return $exceptionFile;
         } else {
             return parent::log($message, $priority);

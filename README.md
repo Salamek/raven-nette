@@ -1,5 +1,7 @@
 # raven-nette
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=D8LQ4XTBLV3C4&lc=CZ&item_number=SalamekPplMyApi&currency_code=EUR)
+
 This is nette implementation of sentry raven-php as logger service for tracy.
 
 Tested with nette 2.2>, please report any bugs into Issues

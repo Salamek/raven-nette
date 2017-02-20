@@ -76,10 +76,11 @@ class SentryLogger extends Logger
      * @param bool $autoWire
      * @param array $options
      */
-    public function __construct($dsn, $inDebug = false, $directory = null, $email = null, $autoWire = true, $options = [])
+    public function __construct($dsn, $inDebug = false, $directory = null, $email = null, $autoWire = true, $options = array())
     {
         // Compability with nette 2.2.0, Tracy\Logger has no __construct in 2.2.0
-        if((new \ReflectionClass('Tracy\Logger'))->getConstructor())
+        $tracyLogger = new \ReflectionClass('Tracy\Logger');
+        if($tracyLogger->getConstructor())
         {
             parent::__construct($directory, $email, Debugger::getBlueScreen());
         }

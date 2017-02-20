@@ -51,7 +51,6 @@
 
 namespace Salamek\RavenNette\DI;
 
-use Salamek\RavenNette\SentryLogger;
 use Nette\DI\CompilerExtension;
 use Nette\PhpGenerator\ClassType;
 use Nette\Utils\Validators;
@@ -74,7 +73,7 @@ class SentryLoggerExtension extends CompilerExtension
         $defaults['inDebug'] = false;
         $defaults['directory'] = Debugger::$logDirectory;
         $defaults['email'] = Debugger::$email;
-        $defaults['options'] = [];
+        $defaults['options'] = array();
 
         $config = $this->getConfig($defaults);
 
@@ -90,12 +89,12 @@ class SentryLoggerExtension extends CompilerExtension
         }
 
         $init->addBody(
-            '$sentryLogger = new ' . SentryLogger::class . '(?, ?, ?, ?, ?, ?);' .
-            Debugger::class . '::$onFatalError[] = function($e) use($sentryLogger)' .
+            '$sentryLogger = new Salamek\RavenNette\SentryLogger(?, ?, ?, ?, ?, ?);' .
+            'Tracy\Debugger::$onFatalError[] = function($e) use($sentryLogger)' .
             '{' .
             '  $sentryLogger->onFatalError($e);' .
             '};' .
-            Debugger::class . '::setLogger($sentryLogger);',
+            'Tracy\Debugger::setLogger($sentryLogger);',
             array(
                 $config['dsn'],
                 $config['inDebug'],
@@ -110,7 +109,7 @@ class SentryLoggerExtension extends CompilerExtension
             $init->addBody(
                 '$user = $this->getService(?);' .
                 'if ($user->isLoggedIn()) { $sentryLogger->setUserContext($user->getId(), \'\', (array) $user->getIdentity()); }',
-                ['user']
+                array('user')
             );
         }
     }

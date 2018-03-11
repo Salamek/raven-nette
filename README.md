@@ -1,3 +1,39 @@
+# Project abandoned due to incompatibility with nette 2.4
+
+Please use `kdyby/monolog` instead
+
+## Simple migration guide
+0. Remove all configuration related to `salamek/raven-nette` && composer depedency from `composer.json`
+1. Install `kdyby/monolog` and `sentry/sentry`
+
+```bash
+composer require kdyby/monolog
+composer require sentry/sentry
+```
+
+2. Configure new extension
+
+```yaml
+sentry:
+    dsn: 'YOUR_SENTRY_DSN'
+extensions:
+    monolog: Kdyby\Monolog\DI\MonologExtension
+    
+monolog:
+    name: PROJECT_NAME
+    hookToTracy: true
+    registerFallback: true
+    handlers:
+        raven: Monolog\Handler\RavenHandler(Raven_Client(%sentry.dsn%))
+    processors:
+        - Monolog\Processor\GitProcessor
+        - Monolog\Processor\WebProcessor
+        - Kdyby\Monolog\Processor\PriorityProcessor
+```
+3. Profit...
+For more informations consult `kdyby/monolog` documentation
+
+
 # raven-nette
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=D8LQ4XTBLV3C4&lc=CZ&item_number=SalamekPplMyApi&currency_code=EUR)
